@@ -1,0 +1,100 @@
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Playwrite+HU:wght@100..400&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Nunito", sans-serif;
+    font-weight: 600;
+}
+
+.playwrite {
+    font-family: "Playwrite HU", cursive;
+    font-weight: 300;
+}
+
+.nunito {
+    font-family: "Nunito", sans-serif;
+    font-weight: 600;
+}
+
+.loader {
+    width: 40px; /* بدل 84px */
+    height: 40px; /* بدل 84px */
+    position: relative;
+    overflow: hidden;
+}
+
+.loader:before,
+.loader:after {
+    width: 30px; /* بدل 64px */
+    height: 30px; /* بدل 64px */
+    left: 50%;
+    bottom: 0;
+    border-radius: 50%;
+    background: #fff;
+    position: absolute;
+    content: "";
+    transform: translate(-50%, 100%) scale(0);
+    animation: push 2s infinite ease-in;
+}
+
+.loader:after {
+    animation-delay: 1s;
+}
+
+@keyframes push {
+    0% {
+        transform: translate(-50%, 100%) scale(1);
+    }
+    15%,
+    25% {
+        transform: translate(-50%, 50%) scale(1);
+    }
+    50%,
+    75% {
+        transform: translate(-50%, -30%) scale(0.5);
+    }
+    80%,
+    100% {
+        transform: translate(-50%, -50%) scale(0);
+    }
+}
+.admin-full-loader {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: inline-block;
+    border-top: 8px solid #fff;
+    border-right: 8px solid transparent;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    position: relative;
+}
+
+.admin-full-loader::after {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border-left: 8px solid #ff3d00;
+    border-bottom: 8px solid transparent;
+    animation: rotation 0.5s linear infinite reverse;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
