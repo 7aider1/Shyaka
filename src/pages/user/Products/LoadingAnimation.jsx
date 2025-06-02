@@ -7,7 +7,7 @@ const LoadingAnimation = () => {
         <div className="relative overflow-hidden min-h-screen flex flex-col items-center justify-center gap-6 bg-slate-100 dark:bg-[#0E2148] transition-colors duration-500">
             {/* بلوب حمراء */}
             <motion.div
-                className="absolute w-52 h-52 bg-[#f44336] opacity-20 rounded-full blur-3xl top-[-3rem] left-[-3rem]"
+                className="absolute w-52 h-52  opacity-20 rounded-full blur-3xl top-[-3rem] left-[-3rem]"
                 animate={{
                     y: [0, 30, 0],
                     x: [0, 30, 0],
