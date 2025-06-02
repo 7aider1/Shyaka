@@ -77,7 +77,7 @@ const SignUp = ({
                 title: "Oops...",
                 text: userExists
                     ? "User with this name or email already exists!"
-                    : "Invalid input or missing gender selection.",
+                    : "Some inputs are missing or contain invalid values.",
                 background: currentTheme === "dark" ? "#0E2148" : "#fff",
                 color: currentTheme === "dark" ? "#8DD8FF" : "#1e293b",
                 confirmButtonColor:
