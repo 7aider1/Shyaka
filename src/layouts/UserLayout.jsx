@@ -29,6 +29,7 @@ import Profile from "../pages/user/Profile/Profile";
 import LoadingAnimation from "../pages/user/Products/LoadingAnimation";
 
 import CartWithProducts from "../pages/user/Cart/CartWithProducts";
+import Swal from "sweetalert2";
 
 const UserLayout = ({
     myProducts,
@@ -51,6 +52,8 @@ const UserLayout = ({
 
     const [isConfirmEdit, setIsConfirmEdit] = useState(false);
 
+    const [numberOfProductAdditions, setNumberOfProductAdditions] = useState(1);
+
     useEffect(() => {
         if (localStorage.userId) {
             setIsLogged(true);
@@ -60,19 +63,49 @@ const UserLayout = ({
     }, [islogged]);
 
     // start of functions for cart
-    const addToCart = id => {
-        const findProduct = myProducts.find(product => product.id === id);
-
-        const exist = cartItems.find(item => item.id === id);
+    const addToCart = productWithQuantity => {
+        const exist = cartItems.find(
+            item => item.id === productWithQuantity.id
+        );
 
         if (!exist) {
-            const newItem = { ...findProduct, quantity: 1 };
+            const newItem = { ...productWithQuantity };
             setCartItems([...cartItems, newItem]);
         }
     };
 
     const removeItem = id => {
-        setCartItems(cartItems.filter(item => item.id !== id));
+        const currentTheme = document.documentElement.classList.contains("dark")
+            ? "dark"
+            : "light";
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you really want to remove this product from your cart?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, remove it",
+            cancelButtonText: "No, keep it",
+            background: currentTheme === "dark" ? "#0E2148" : "#ffffff",
+            color: currentTheme === "dark" ? "#8DD8FF" : "#1e293b"
+        }).then(result => {
+            if (result.isConfirmed) {
+                setCartItems(cartItems.filter(item => item.id !== id));
+                Swal.fire({
+                    icon: "success",
+                    title: "Removed!",
+                    text: "The product has been removed from your cart.",
+                    timer: 1500,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: "top-end",
+                    background: currentTheme === "dark" ? "#0E2148" : "#ffffff",
+                    color: currentTheme === "dark" ? "#8DD8FF" : "#1e293b"
+                });
+            }
+        });
     };
 
     const increaseQuantity = id => {
@@ -93,10 +126,9 @@ const UserLayout = ({
             const updatedCart = cartItems.map(item =>
                 item.id === id ? { ...item, quantity: item.quantity - 1 } : item
             );
-            if (exist.quantity == 1) {
-                removeItem(id);
-            } else {
+            if (exist.quantity !== 1) {
                 setCartItems(updatedCart);
+            } else {
             }
         }
     };
@@ -152,6 +184,12 @@ const UserLayout = ({
                                 islogged={islogged}
                                 setIsLogged={setIsLogged}
                                 cartItems={cartItems}
+                                numberOfProductAdditions={
+                                    numberOfProductAdditions
+                                }
+                                setNumberOfProductAdditions={
+                                    setNumberOfProductAdditions
+                                }
                             />
                         }
                     />
@@ -190,6 +228,9 @@ const UserLayout = ({
                                 removeItem={removeItem}
                                 setCartIndex={setCartIndex}
                                 islogged={islogged}
+                                numberOfProductAdditions={
+                                    numberOfProductAdditions
+                                }
                             />
                         }
                     />

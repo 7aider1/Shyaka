@@ -10,7 +10,10 @@ import { FaShoppingCart, FaStar } from "react-icons/fa";
 import LoadingAnimation from "./LoadingAnimation";
 import React from "react";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+
+import { motion } from "framer-motion";
+import { FaPlus } from "react-icons/fa";
+import { FaMinus } from "react-icons/fa";
 
 const Products = ({
     myProducts,
@@ -19,12 +22,31 @@ const Products = ({
     getProducts,
     addToCart,
     islogged,
-    cartItems
+    cartItems,
+    numberOfProductAdditions,
+    setNumberOfProductAdditions
 }) => {
+    const [isProductModalOpen, SetIsProductModelOpen] = useState(false);
+
+    const [productModalProp, setProductModalProp] = useState(null);
+
+    const decrementNumberOfProductAdditions = () => {
+        if (numberOfProductAdditions > 1) {
+            setNumberOfProductAdditions(numberOfProductAdditions - 1);
+        }
+    };
     useEffect(() => {
         getProducts();
     }, []);
-    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (isProductModalOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+        }
+    }, [isProductModalOpen]);
+
     return (
         <div
             className="py-10 px-4 min-h-screen
@@ -115,24 +137,9 @@ const Products = ({
                                                             : "#1e293b"
                                                 });
                                             } else {
-                                                addToCart(product.id);
-                                                Swal.fire({
-                                                    icon: "success",
-                                                    title: "Added to Cart 🛒",
-                                                    text: `${product.title} has been added successfully!`,
-                                                    toast: true,
-                                                    position: "top-end",
-                                                    timer: 2000,
-                                                    showConfirmButton: false,
-                                                    background:
-                                                        currentTheme === "dark"
-                                                            ? "#0E2148"
-                                                            : "#ffffff",
-                                                    color:
-                                                        currentTheme === "dark"
-                                                            ? "#8DD8FF"
-                                                            : "#1e293b"
-                                                });
+                                                SetIsProductModelOpen(true);
+                                                setNumberOfProductAdditions(1);
+                                                setProductModalProp(product);
                                             }
                                         } else {
                                             Swal.fire({
@@ -162,6 +169,135 @@ const Products = ({
                             </CardFooter>
                         </Card>
                     ))}
+                </div>
+            )}
+            {isProductModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 dark:bg-black/60 backdrop-blur-sm">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25, ease: "easeOut" }}
+                        className="w-full max-w-md p-4">
+                        <Card className="rounded-2xl shadow-xl overflow-hidden bg-white dark:bg-[#0E2148] text-black dark:text-[#A4E7FF]">
+                            {productModalProp?.image && (
+                                <img
+                                    src={productModalProp?.image}
+                                    alt={productModalProp?.title}
+                                    className="w-full h-40 object-contain bg-white dark:bg-[#132C50]"
+                                />
+                            )}
+                            <CardBody className="space-y-4 p-6">
+                                <Typography
+                                    variant="h5"
+                                    className="text-center font-semibold text-slate-900 dark:text-[#8DD8FF]">
+                                    {productModalProp?.title}
+                                </Typography>
+                                <div className="max-h-24 overflow-y-auto pr-1 text-sm text-center text-gray-600 dark:text-[#A4E7FF] custom-scrollbar">
+                                    {productModalProp?.description}
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 dark:text-[#A4E7FF]">
+                                    <h1>Price:</h1>
+                                    <div className="text-right">
+                                        ${productModalProp?.price}
+                                    </div>
+                                    <div>Category:</div>
+                                    <div className="text-right">
+                                        {productModalProp?.category}
+                                    </div>
+                                    <div>rate:</div>
+                                    <div className="text-right">
+                                        {productModalProp?.rate}
+                                    </div>
+                                </div>
+
+                                <Typography
+                                    variant="h6"
+                                    className="text-center font-bold pt-2 text-[#f44336] dark:text-[#8DD8FF]">
+                                    Total: $
+                                    {(
+                                        numberOfProductAdditions *
+                                        productModalProp?.price
+                                    ).toFixed(2)}
+                                </Typography>
+
+                                <div className="flex items-center justify-between py-2">
+                                    <Button
+                                        variant="outlined"
+                                        size="sm"
+                                        onClick={() => {
+                                            decrementNumberOfProductAdditions();
+                                        }}
+                                        className="border-[#f44336] bg-[#fa584c] dark:bg-[#8DD8FF] dark:hover:bg-[#71c5ea] dark:border-[#8DD8FF] text-white dark:text-[#0E2148] text-md mb-3">
+                                        <FaMinus />
+                                    </Button>
+                                    <span className="font-semibold text-black dark:text-[#A4E7FF]">
+                                        {numberOfProductAdditions}
+                                    </span>
+                                    <Button
+                                        variant="outlined"
+                                        size="sm"
+                                        onClick={() => {
+                                            setNumberOfProductAdditions(
+                                                numberOfProductAdditions + 1
+                                            );
+                                        }}
+                                        className="border-[#f44336] bg-[#fa584c] dark:bg-[#8DD8FF] dark:hover:bg-[#71c5ea] dark:border-[#8DD8FF] text-white dark:text-[#0E2148] text-md mb-3">
+                                        <FaPlus />
+                                    </Button>
+                                </div>
+
+                                <div className="flex gap-2">
+                                    <Button
+                                        fullWidth
+                                        variant="outlined"
+                                        className="border-gray-400 dark:border-[#2e4672] text-black dark:text-[#A4E7FF]"
+                                        onClick={() =>
+                                            SetIsProductModelOpen(false)
+                                        }>
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        fullWidth
+                                        className="bg-[#f44336] hover:bg-[#e53935] text-white dark:bg-[#8DD8FF] dark:hover:bg-[#71c5ea] dark:text-[#0E2148]"
+                                        onClick={() => {
+                                            SetIsProductModelOpen(false);
+                                            addToCart({
+                                                ...productModalProp,
+                                                quantity:
+                                                    numberOfProductAdditions
+                                            });
+
+                                            const currentTheme =
+                                                document.documentElement.classList.contains(
+                                                    "dark"
+                                                )
+                                                    ? "dark"
+                                                    : "light";
+                                            Swal.fire({
+                                                icon: "success",
+                                                title: "Added to Cart 🛒",
+                                                text: `${productModalProp?.title} has been added successfully!`,
+                                                toast: true,
+                                                position: "top-end",
+                                                timer: 2000,
+                                                showConfirmButton: false,
+                                                background:
+                                                    currentTheme === "dark"
+                                                        ? "#0E2148"
+                                                        : "#ffffff",
+                                                color:
+                                                    currentTheme === "dark"
+                                                        ? "#8DD8FF"
+                                                        : "#1e293b"
+                                            });
+                                        }}>
+                                        Add to Cart
+                                    </Button>
+                                </div>
+                            </CardBody>
+                        </Card>
+                    </motion.div>
                 </div>
             )}
         </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, Typography, Button } from "@material-tailwind/react";
 import { FaTrash } from "react-icons/fa";
 import EmptyShoppingCart from "./EmptyShoppingCart";
+import Swal from "sweetalert2";
 
 const CartWithProducts = ({
     increaseQuantity,
@@ -9,7 +10,8 @@ const CartWithProducts = ({
     removeItem,
     cartItems,
     setCartIndex,
-    islogged
+    islogged,
+    numberOfProductAdditions
 }) => {
     useEffect(() => {
         cartItems.map((data, index) => {
@@ -27,6 +29,21 @@ const CartWithProducts = ({
     const getTotalProducts = () =>
         cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
+    const progressAlert = () => {
+        const currentTheme = document.documentElement.classList.contains("dark")
+            ? "dark"
+            : "light";
+        Swal.fire({
+            icon: "info",
+            title: "Feature in Progress 🚧",
+            text: "This option is currently unavailable and under development.",
+            confirmButtonText: "OK",
+            background: currentTheme === "dark" ? "#0E2148" : "#fff",
+            color: currentTheme === "dark" ? "#8DD8FF" : "#1e293b",
+            confirmButtonColor: "#0f172a"
+        });
+    };
+
     return (
         <>
             {cartItems.length === 0 || islogged == false ? (
@@ -41,9 +58,9 @@ const CartWithProducts = ({
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
                         <div className="lg:col-span-2 space-y-6">
-                            {cartItems.map(item => (
+                            {cartItems.map((item, index) => (
                                 <Card
-                                    key={item.id}
+                                    key={index}
                                     className="flex flex-col sm:flex-row items-center justify-between p-4 shadow-lg transition-shadow duration-300 hover:shadow-xl border bg-white border-gray-200 text-gray-900 dark:bg-[#132C50] dark:border-[#2e4672] dark:text-[#8DD8FF]">
                                     <img
                                         src={item.image}
@@ -124,6 +141,9 @@ const CartWithProducts = ({
                                 </span>
                             </div>
                             <Button
+                                onClick={() => {
+                                    progressAlert();
+                                }}
                                 className="w-full font-semibold shadow-md hover:shadow-xl transition-all
                                    bg-gradient-to-r  bg-red-500 hover:bg-red-600
                                    text-white dark:bg-[#8DD8FF] dark:hover:bg-[#71c5ea] dark:text-[#0E2148]">
