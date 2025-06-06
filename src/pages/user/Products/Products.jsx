@@ -207,7 +207,7 @@ const Products = ({
                                     </div>
                                     <div>rate:</div>
                                     <div className="text-right">
-                                        {productModalProp?.rate}
+                                        {productModalProp?.rating.rate}
                                     </div>
                                 </div>
 
